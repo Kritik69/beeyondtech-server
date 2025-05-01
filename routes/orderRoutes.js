@@ -3,12 +3,13 @@ const express = require("express");
 const Order = require("../models/Order");
 const Product = require("../models/Product"); // Import the Product model
 const NodeCache = require("node-cache");
+const { isAdmin, authenticateJWT } = require("../middleware/authMiddleware");
 const cache = new NodeCache({ stdTTL: 300 }); // Cache TTL of 5 minutes
 const router = express.Router();
 
 // Create new order (POST /api/orders/)
 // Create new order
-router.post("/", async (req, res) => {
+router.post("/", authenticateJWT, async (req, res) => {
   try {
     const io = req.app.get("io");
 
@@ -71,7 +72,7 @@ router.post("/", async (req, res) => {
 });
 
 // Get logged-in user's orders (GET /api/orders/myorders)
-router.get("/myorders/:id", async (req, res) => {
+router.get("/myorders/:id", authenticateJWT, async (req, res) => {
   try {
     const { id } = req.params;
     console.log(req.params);
@@ -87,7 +88,7 @@ router.get("/myorders/:id", async (req, res) => {
 });
 
 // Get single order by ID (GET /api/orders/:id)
-router.get("/:id", async (req, res) => {
+router.get("/:id", authenticateJWT, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id)
       .populate("user", "email")
@@ -102,7 +103,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Admin: Get all orders (GET /api/orders/)
-router.get("/", async (req, res) => {
+router.get("/", authenticateJWT, isAdmin, async (req, res) => {
   try {
     const { status } = req.query;
 
@@ -140,7 +141,7 @@ router.get("/", async (req, res) => {
 });
 
 // Admin: Update order status (PUT /api/orders/:id/status)
-router.put("/:id/status", async (req, res) => {
+router.put("/:id/status", authenticateJWT, async (req, res) => {
   try {
     const io = req.app.get("io");
     const { status } = req.body;
@@ -168,7 +169,7 @@ router.put("/:id/status", async (req, res) => {
 });
 
 // Admin: Delete an order (DELETE /api/orders/:id)
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateJWT, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
 

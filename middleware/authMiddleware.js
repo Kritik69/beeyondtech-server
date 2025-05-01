@@ -8,7 +8,7 @@ const authenticateJWT = (req, res, next) => {
   let user;
   if (userHeader) {
     try {
-      user = JSON.parse(userHeader); // Safely parse the user header
+      user = JSON.parse(userHeader);
       console.log(user);
     } catch (error) {
       return res.status(400).json({ message: "Invalid user header format" });
@@ -32,7 +32,7 @@ const isAdmin = (req, res, next) => {
   let user;
   if (userHeader) {
     try {
-      user = JSON.parse(userHeader); // Safely parse the user header
+      user = JSON.parse(userHeader);
       console.log(user);
     } catch (error) {
       return res.status(400).json({ message: "Invalid user header format" });
