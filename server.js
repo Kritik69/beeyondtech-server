@@ -25,9 +25,9 @@ const io = new Server(server, {
 app.set("io", io);
 
 // Middleware
-app.use(logger("dev"));
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: "*" })); // Accept all origins
 app.use(express.json()); // Parse JSON request bodies
+app.use(logger("dev"));
 
 // Socket.IO connection
 io.on("connection", (socket) => {
